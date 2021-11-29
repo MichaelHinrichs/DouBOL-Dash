@@ -176,13 +176,14 @@ namespace DouBOLDash
             matstack.Push(0xFFFF);
             nodestack.Push(-1);
 
-            m_File.Stream.Position += 8;
+            m_File.Stream.Position += 4;
+            NumPackets = m_File.Reader.ReadUInt32();
             NumVertices = m_File.Reader.ReadUInt32();
 
             uint datastart = m_File.Reader.ReadUInt32();
             m_File.Stream.Position += (datastart - 0x18);
 
-            ushort curtype = 0;
+            ushort curtype;
             while ((curtype = m_File.Reader.ReadUInt16()) != 0)
             {
                 ushort arg = m_File.Reader.ReadUInt16();
@@ -1543,6 +1544,7 @@ namespace DouBOLDash
         public Vector3 BBoxMin, BBoxMax;
 
         // INF1
+        public uint NumPackets;
         public uint NumVertices;
         public List<SceneGraphNode> SceneGraph;
 
