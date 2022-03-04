@@ -80,6 +80,24 @@ namespace DouBOLDash
         private delegate float ReadArrayValueFunc(byte fixedpoint);
         private delegate Vector4 ReadColorValueFunc();
 
+        private float ReadArrayValue_u8(byte fixedpoint)
+        {
+            byte val = m_File.Reader.ReadByte();
+            return (float)(val / (float)(1 << fixedpoint));
+        }
+
+        private float ReadArrayValue_s8(byte fixedpoint)
+        {
+            sbyte val = m_File.Reader.ReadSByte();
+            return (float)(val / (float)(1 << fixedpoint));
+        }
+
+        private float ReadArrayValue_u16(byte fixedpoint)
+        {
+            ushort val = m_File.Reader.ReadUInt16();
+            return (float)(val / (float)(1 << fixedpoint));
+        }
+
         private float ReadArrayValue_s16(byte fixedpoint)
         {
             short val = m_File.Reader.ReadInt16();
@@ -152,7 +170,6 @@ namespace DouBOLDash
             byte a = (byte)(dat[2] & 0x3F);
             return new Vector4(r / 255f, g / 255f, b / 255f, a / 255f);
         }
-
         private Vector4 ReadColorValue_RGBA8()
         {
             byte r = m_File.Reader.ReadByte();
@@ -273,7 +290,7 @@ namespace DouBOLDash
                     {
                         //Added more types and removed exception. Modified 1/23/15
                         case 0: readcolor = ReadColorValue_RGB565; arraysize /= 2; break;
-                        case 1: readcolor = ReadColorValue_RGBA8; arraysize /= 4; break;
+                        case 1: readcolor = ReadColorValue_RGB8; arraysize /= 4; break;
                         case 2: readcolor = ReadColorValue_RGBX8; arraysize /= 4; break;
                         case 3: readcolor = ReadColorValue_RGBA4; arraysize /= 2; break;
                         case 4: readcolor = ReadColorValue_RGBA6; arraysize /= 3; break;
@@ -285,6 +302,9 @@ namespace DouBOLDash
                 {
                     switch (datatype)
                     {
+                        case 0: readval = ReadArrayValue_u8; arraysize /= 1; break;
+                        case 1: readval = ReadArrayValue_s8; arraysize /= 1; break;
+                        case 2: readval = ReadArrayValue_u16; arraysize /= 2; break;
                         case 3: readval = ReadArrayValue_s16; arraysize /= 2; break;
                         case 4: readval = ReadArrayValue_f32; arraysize /= 4; break;
                         case 5: readval = ReadArrayValue_rgb; break;
